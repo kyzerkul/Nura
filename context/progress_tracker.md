@@ -7,15 +7,26 @@
 
 ## Current phase
 
-**PHASE 1 — Design**
+**PHASE 1 — Design** ✅ COMPLETE
 
 Goal: Define the visual identity of Nura before writing any feature code. Wireframes, palette, typography, and design tokens must be finalized and added to `context/ui_context.md` before Phase 2 begins.
+
+**PHASE 2 — Build** (in progress)
+
+Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 
 ---
 
 ## Status
 
 ### Completed
+
+#### Phase 1 — Design ✅
+- [x] Define visual identity (palette, typography, mood)
+- [x] Create wireframes for core screens (6 screens × 2 variants, choices made)
+- [x] Update `context/ui_context.md` with finalized design tokens
+- [x] Finalize body font → Plus Jakarta Sans
+- [x] Write `context/feature_specs/01_design_system.md`
 
 #### Phase 0 — Infrastructure ✅
 - [x] Context folder structure created (`context/`, `context/feature_specs/`)
@@ -34,18 +45,16 @@ Goal: Define the visual identity of Nura before writing any feature code. Wirefr
 - [x] Infrastructure PR reviewed by CodeRabbit ✅ — no issues found
 - [x] PR merged to `main`
 
+#### Phase 2 — Build (unit 01) ✅
+- [x] `01_design_system` — NativeWind v4 + Tailwind + design tokens + base components
+
 ### In progress
 
-**Phase 1 — Design**
-- [ ] Define visual identity (palette, typography, mood)
-- [ ] Create wireframes for core screens: Splash, Onboarding, Companion selection, Chat, Profile
-- [ ] Update `context/ui_context.md` with finalized design tokens
-- [ ] Write `context/feature_specs/01_design_system.md`
+(none)
 
 ### Upcoming
 
 **Phase 2 — Build (spec-driven, one unit at a time)**
-- [ ] `01_design_system` — NativeWind setup + design tokens
 - [ ] `02_supabase_setup` — DB schema, RLS policies, Edge Function scaffold
 - [ ] `03_authentication` — Sign up, login, OTP, session persistence
 - [ ] `04_onboarding` — Companion selection, intro flow
@@ -88,6 +97,34 @@ Goal: Define the visual identity of Nura before writing any feature code. Wirefr
 ---
 
 ## Session notes
+
+### 2026-05-24 — Phase 2 unit 01: Design System implemented
+- NativeWind v4.2.4 + Tailwind CSS 3.4.19 installed and configured
+- `tailwind.config.js` with full color palette, font families, fontSize scale, borderRadius tokens
+- `metro.config.js` with `withNativeWind` wrapper
+- `src/global.css` with @tailwind directives
+- `src/constants/colors.ts` — light + dark color objects with `getColors()` helper
+- `src/constants/fonts.ts` — Plus Jakarta Sans (4 weights) + Caveat Brush font loading map
+- `src/app/_layout.tsx` — font loading via `useFonts`, splash screen, system color scheme detection
+- 6 base components in `src/components/ui/`: Text, Button, Card, Avatar, Input, MoodPicker
+- `app.json` splash/icon colors updated to brand beige (#f0eee9)
+- `nativewind-env.d.ts` for TypeScript className support
+- Default Expo template files cleaned up (themed-text, themed-view, app-tabs, etc. removed)
+- `src/constants/theme.ts` deleted, replaced by `colors.ts`
+- TypeScript compiles with zero errors (`npx tsc --noEmit`)
+- Metro bundler starts without errors
+- No console.log, no hardcoded hex in components, no raw secrets
+- **Limitation**: No emulator available on this machine — visual rendering not verified
+- **Next action**: Write `02_supabase_setup.md` spec → implement DB schema + RLS + Edge Function scaffold
+
+### 2026-05-24 — Design phase: wireframes reviewed, tokens extracted
+- Wireframes reviewed (6 screens × 2 variants each, from designer export)
+- **Screen choices**: All B variants except Onboarding Personnalisation (A — wizard)
+- Palette finalized: terracotta (#c96442) + beige (#f0eee9) + gold (#d9a55a) + dark mode browns
+- Typography: Caveat Brush (brand), body font TBD (DM Sans / Manrope / Plus Jakarta Sans)
+- Navigation: 4-tab bottom bar (Accueil, Chat, Journal, Moi)
+- `context/ui_context.md` fully populated with design tokens, components, screen decisions
+- **Next action: finalize body font → write `01_design_system.md` spec → start Phase 2**
 
 ### 2026-05-24 — Infrastructure complete, PR merged
 - Phase 0 fully complete — all 6 context files written, Expo SDK 56 initialized
