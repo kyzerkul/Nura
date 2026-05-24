@@ -78,7 +78,16 @@ CREATE POLICY "Users can insert own conversations"
     )
   );
 CREATE POLICY "Users can update own conversations"
-  ON conversations FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+  ON conversations FOR UPDATE
+  USING (auth.uid() = user_id)
+  WITH CHECK (
+    auth.uid() = user_id
+    AND EXISTS (
+      SELECT 1 FROM companions
+      WHERE companions.id = companion_id
+        AND companions.user_id = auth.uid()
+    )
+  );
 CREATE POLICY "Users can delete own conversations"
   ON conversations FOR DELETE USING (auth.uid() = user_id);
 
