@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { Text } from './Text';
 
 const MOODS = ['😞', '😕', '🙂', '😊', '😍'] as const;
+const MOOD_LABELS = ['Très mal', 'Pas bien', 'Neutre', 'Bien', 'Très bien'] as const;
 
 type MoodPickerProps = {
   selected?: number;
@@ -18,10 +19,12 @@ type MoodPickerProps = {
 
 function MoodItem({
   emoji,
+  label,
   isSelected,
   onPress,
 }: {
   emoji: string;
+  label: string;
   isSelected: boolean;
   onPress: () => void;
 }) {
@@ -36,7 +39,12 @@ function MoodItem({
   }));
 
   return (
-    <Pressable onPress={onPress}>
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`Humeur : ${label}`}
+      accessibilityState={{ selected: isSelected }}
+    >
       <Animated.View
         style={animatedStyle}
         className={`w-12 h-12 rounded-avatar items-center justify-center ${
@@ -60,6 +68,7 @@ export function MoodPicker({ selected, onSelect, className = '' }: MoodPickerPro
         <MoodItem
           key={index}
           emoji={emoji}
+          label={MOOD_LABELS[index]}
           isSelected={selected === index}
           onPress={() => onSelect(index)}
         />
