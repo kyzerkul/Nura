@@ -7,9 +7,9 @@
 
 ## Current phase
 
-**PHASE 0 — Infrastructure Setup**
+**PHASE 1 — Design**
 
-Goal: Context system, CLAUDE.md, and base Expo project in place before any feature work.
+Goal: Define the visual identity of Nura before writing any feature code. Wireframes, palette, typography, and design tokens must be finalized and added to `context/ui_context.md` before Phase 2 begins.
 
 ---
 
@@ -17,26 +17,32 @@ Goal: Context system, CLAUDE.md, and base Expo project in place before any featu
 
 ### Completed
 
+#### Phase 0 — Infrastructure ✅
 - [x] Context folder structure created (`context/`, `context/feature_specs/`)
 - [x] `CLAUDE.md` written at project root
 - [x] `context/project_overview.md` written
 - [x] `context/architecture.md` written
 - [x] `context/code_standards.md` written
 - [x] `context/ai_workflow_rules.md` written
-- [x] `context/ui_context.md` written (placeholder — awaits design phase)
+- [x] `context/ui_context.md` initialized (placeholder — design tokens TBD)
 - [x] `context/progress_tracker.md` initialized
+- [x] Expo SDK 56 project initialized (managed workflow)
+- [x] Project renamed from NuraTmp → Nura (`package.json`, `app.json`)
+- [x] `.env` added to `.gitignore`
+- [x] Node.js updated to v22 LTS
+- [x] GitHub repo created: https://github.com/kyzerkul/Nura
+- [x] Infrastructure PR reviewed by CodeRabbit ✅ — no issues found
+- [x] PR merged to `main`
 
 ### In progress
 
-- [ ] Expo project initialized (`npx create-expo-app`)
-
-### Upcoming
-
 **Phase 1 — Design**
-- [ ] Define visual identity (palette, typography, component styles)
-- [ ] Create wireframes for core screens: Onboarding, Companion selection, Chat, Profile
+- [ ] Define visual identity (palette, typography, mood)
+- [ ] Create wireframes for core screens: Splash, Onboarding, Companion selection, Chat, Profile
 - [ ] Update `context/ui_context.md` with finalized design tokens
 - [ ] Write `context/feature_specs/01_design_system.md`
+
+### Upcoming
 
 **Phase 2 — Build (spec-driven, one unit at a time)**
 - [ ] `01_design_system` — NativeWind setup + design tokens
@@ -53,12 +59,12 @@ Goal: Context system, CLAUDE.md, and base Expo project in place before any featu
 
 | Service | Status | Notes |
 |---|---|---|
-| Supabase | ✅ Account created | |
-| Trigger.dev | ✅ Account created | |
-| CodeRabbit | ✅ Account created | Connected to GitHub repo |
-| GitHub | ✅ Repo created | |
-| PostHog | ✅ Account created | |
-| OpenRouter | ⏳ Pending | Needed for DeepSeek V4 + Minimax M2.5 access — verify model slugs on openrouter.ai |
+| Supabase | ✅ Ready | |
+| Trigger.dev | ✅ Ready | |
+| CodeRabbit | ✅ Ready | Connected to GitHub — reviews all PRs automatically |
+| GitHub | ✅ Ready | https://github.com/kyzerkul/Nura |
+| PostHog | ✅ Ready | |
+| OpenRouter | ⏳ Pending | Verify exact model slugs for DeepSeek V4 + Minimax M2.5 on openrouter.ai |
 
 ---
 
@@ -66,26 +72,31 @@ Goal: Context system, CLAUDE.md, and base Expo project in place before any featu
 
 | Date | Decision | Reason |
 |---|---|---|
-| 2026-05-24 | DeepSeek V4 as primary AI model (not Gemini Flash) | Clarification from founder — was misheard during initial briefing |
-| 2026-05-24 | OpenRouter `models` array for native fallback | Cleaner than try/catch — OpenRouter handles failover automatically |
+| 2026-05-24 | DeepSeek V4 as primary AI model | Clarification from founder — misheard as Gemini during initial briefing |
 | 2026-05-24 | Minimax M2.5 as fallback model (to be reviewed in V2) | Free alternative if DeepSeek unavailable |
-| 2026-05-24 | Add PostHog analytics | Product analytics for funnel, retention, event tracking — PostHog chosen for self-hostable option |
-| 2026-05-24 | PostHog must never receive message content | Privacy — only structural events tracked |
-| 2026-05-24 | Nura is not an "African app" — it's an app for women | Launches in francophone markets first but built for global scale from day 1 |
-| 2026-05-23 | Use Supabase (not Firebase) as backend | Single service for auth + DB + storage + realtime; generous free tier; SQL = better for relational data |
+| 2026-05-24 | OpenRouter `models` array for native fallback | Cleaner than try/catch — OpenRouter handles failover automatically |
+| 2026-05-24 | Add PostHog analytics | Funnel, retention, event tracking — never log message content (privacy) |
+| 2026-05-24 | Nura is an app for women — not defined by geography | Launches in francophone markets first, built for global scale from day 1 |
+| 2026-05-24 | Supabase Auth (not Clerk) | RLS + auth share the same JWT natively — no sync complexity, smaller attack surface |
+| 2026-05-23 | Supabase as backend (not Firebase) | Auth + DB + Storage + Realtime in one service, generous free tier, SQL |
 | 2026-05-23 | All AI calls via Supabase Edge Functions | Never expose OpenRouter key to client |
-| 2026-05-23 | Use Trigger.dev for agentic jobs | Long-running jobs (>10s) can't run in Edge Functions; Trigger handles retries and scheduling |
-| 2026-05-23 | No payments in v1 | Free beta to get real user feedback before monetization |
-| 2026-05-23 | Expo managed workflow (not bare) | Windows-compatible, faster setup, sufficient for MVP |
-| 2026-05-23 | French + English from MVP | Launch market is francophone but product is built for global scale |
+| 2026-05-23 | Trigger.dev for agentic background jobs | Long-running jobs (>10s) need dedicated infrastructure with retries |
+| 2026-05-23 | No payments in v1 | Free beta to gather real user feedback before monetization |
+| 2026-05-23 | Expo managed workflow | Windows-compatible, fast setup, sufficient for MVP |
+| 2026-05-23 | French + English from MVP | Launch market is francophone, product built for global scale |
 
 ---
 
 ## Session notes
 
-### 2026-05-23 — Infrastructure setup
-- Project concept defined: AI companion for African women
-- 6-file context system initialized based on spec-driven methodology
-- Stack decided: Expo + Supabase + OpenRouter (Gemini Flash) + Trigger.dev
-- Design phase must happen before any feature development
-- Next action: initialize Expo project, then move to design phase
+### 2026-05-24 — Infrastructure complete, PR merged
+- Phase 0 fully complete — all 6 context files written, Expo SDK 56 initialized
+- Infrastructure PR reviewed by CodeRabbit with zero issues — merged to main
+- Workflow established: feature branch → PR → CodeRabbit review → merge to main
+- Stack finalized: Expo + Supabase + OpenRouter (DeepSeek V4 / Minimax M2.5) + Trigger.dev + PostHog
+- **Next action: Phase 1 — Design (wireframes + visual identity + design tokens)**
+
+### 2026-05-23 — Project kickoff
+- Project concept defined: AI companion app for women
+- 6-file context system initialized based on spec-driven agentic development methodology
+- Stack decided, accounts created
