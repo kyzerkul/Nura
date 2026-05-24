@@ -48,6 +48,9 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 #### Phase 2 — Build (unit 01) ✅
 - [x] `01_design_system` — NativeWind v4 + Tailwind + design tokens + base components
 
+#### Phase 2 — Build (unit 02) ✅
+- [x] `02_supabase_setup` — Supabase client, DB schema, RLS, Edge Function scaffold
+
 ### In progress
 
 (none)
@@ -55,7 +58,7 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 ### Upcoming
 
 **Phase 2 — Build (spec-driven, one unit at a time)**
-- [ ] `02_supabase_setup` — DB schema, RLS policies, Edge Function scaffold
+- [x] `02_supabase_setup` — DB schema, RLS policies, Edge Function scaffold
 - [ ] `03_authentication` — Sign up, login, OTP, session persistence
 - [ ] `04_onboarding` — Companion selection, intro flow
 - [ ] `05_chat` — Chat screen, AI integration, message history
@@ -73,7 +76,7 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 | CodeRabbit | ✅ Ready | Connected to GitHub — reviews all PRs automatically |
 | GitHub | ✅ Ready | https://github.com/kyzerkul/Nura |
 | PostHog | ✅ Ready | |
-| OpenRouter | ⏳ Pending | Verify exact model slugs for DeepSeek V4 + Minimax M2.5 on openrouter.ai |
+| OpenRouter | ✅ Ready | Slugs verified: `deepseek/deepseek-v4-flash:free` + `minimax/minimax-m2.5:free` |
 
 ---
 
@@ -97,6 +100,24 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 ---
 
 ## Session notes
+
+### 2026-05-24 — Phase 2 unit 02: Supabase Setup implemented
+- `@supabase/supabase-js`, `react-native-url-polyfill`, `expo-secure-store` installed
+- `src/lib/supabase.ts` — typed client with SecureStore adapter, `detectSessionInUrl: false`
+- `src/types/database.ts` — `Database` type with Row/Insert/Update for 6 tables
+- `supabase/migrations/001_initial_schema.sql` — full schema: `profiles`, `companions`, `conversations`, `messages`, `conversation_summaries`, `push_tokens`
+- RLS enabled on all 6 tables; `messages` and `conversation_summaries` use join-based policies
+- `handle_new_user` trigger auto-creates profile on signup
+- `update_updated_at` trigger on `profiles`, `conversations`, `conversation_summaries`
+- `supabase/functions/chat/index.ts` — Edge Function scaffold: JWT verification, OpenRouter call with `models` fallback array
+- Model slugs verified: `deepseek/deepseek-v4-flash:free` (primary), `minimax/minimax-m2.5:free` (fallback)
+- `.env` created (gitignored), `.env.example` committed with placeholders
+- `tsconfig.json` updated to exclude `supabase/functions` (Deno runtime, not Node)
+- TypeScript compiles with zero errors (`npx tsc --noEmit`)
+- No `console.log` in app code
+- **Action requise**: exécuter la migration SQL dans le dashboard Supabase (SQL Editor → coller le contenu de `001_initial_schema.sql`)
+- **Action requise**: ajouter `OPENROUTER_API_KEY` dans Supabase Dashboard → Edge Functions → Secrets
+- **Next action**: Write `03_authentication.md` spec → implement auth flows
 
 ### 2026-05-24 — Phase 2 unit 01: Design System implemented
 - NativeWind v4.2.4 + Tailwind CSS 3.4.19 installed and configured

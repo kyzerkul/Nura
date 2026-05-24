@@ -57,8 +57,8 @@ OpenRouter supports native model fallback via the `models` array. This is used i
 POST https://openrouter.ai/api/v1/chat/completions
 {
   "models": [
-    "deepseek/deepseek-v4",
-    "minimax/minimax-m2.5"
+    "deepseek/deepseek-v4-flash:free",
+    "minimax/minimax-m2.5:free"
   ],
   "route": "fallback",
   "messages": [...]
@@ -67,10 +67,10 @@ POST https://openrouter.ai/api/v1/chat/completions
 
 OpenRouter tries the first model; if it fails or times out, it automatically uses the next one. No retry logic needed in our Edge Function.
 
-**Model IDs to verify at build time** (check `openrouter.ai/models` — exact IDs change as models are updated):
-- Primary: DeepSeek V4 — verify exact slug on openrouter.ai
-- Fallback: Minimax M2.5 — verify exact slug on openrouter.ai
-- Fallback models will be reviewed and potentially updated in V2
+**Model IDs** (verified 2026-05-24):
+- Primary: `deepseek/deepseek-v4-flash:free`
+- Fallback: `minimax/minimax-m2.5:free`
+- Both free tier — fallback models will be reviewed and potentially updated in V2
 
 **Invariant**: Every OpenRouter call must use the `models` array with both primary and fallback. Never call with a single `model` string.
 
