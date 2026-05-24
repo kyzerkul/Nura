@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "NuraTmp",
-    "slug": "NuraTmp",
+    "name": "Nura",
+    "slug": "nura",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "nuratmp",
+    "scheme": "nura",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon"
