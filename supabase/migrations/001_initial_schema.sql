@@ -21,7 +21,7 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can read own profile"
   ON profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile"
-  ON profiles FOR UPDATE USING (auth.uid() = id);
+  ON profiles FOR UPDATE USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
 CREATE POLICY "Users can insert own profile"
   ON profiles FOR INSERT WITH CHECK (auth.uid() = id);
 
@@ -45,7 +45,7 @@ CREATE POLICY "Users can read own companions"
 CREATE POLICY "Users can insert own companions"
   ON companions FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own companions"
-  ON companions FOR UPDATE USING (auth.uid() = user_id);
+  ON companions FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can delete own companions"
   ON companions FOR DELETE USING (auth.uid() = user_id);
 
@@ -68,9 +68,17 @@ ALTER TABLE conversations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can read own conversations"
   ON conversations FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "Users can insert own conversations"
-  ON conversations FOR INSERT WITH CHECK (auth.uid() = user_id);
+  ON conversations FOR INSERT
+  WITH CHECK (
+    auth.uid() = user_id
+    AND EXISTS (
+      SELECT 1 FROM companions
+      WHERE companions.id = companion_id
+        AND companions.user_id = auth.uid()
+    )
+  );
 CREATE POLICY "Users can update own conversations"
-  ON conversations FOR UPDATE USING (auth.uid() = user_id);
+  ON conversations FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can delete own conversations"
   ON conversations FOR DELETE USING (auth.uid() = user_id);
 
@@ -173,7 +181,7 @@ CREATE POLICY "Users can read own push tokens"
 CREATE POLICY "Users can insert own push tokens"
   ON push_tokens FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update own push tokens"
-  ON push_tokens FOR UPDATE USING (auth.uid() = user_id);
+  ON push_tokens FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can delete own push tokens"
   ON push_tokens FOR DELETE USING (auth.uid() = user_id);
 

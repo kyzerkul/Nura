@@ -66,7 +66,11 @@ serve(async (req: Request) => {
     );
 
     if (!openRouterResponse.ok) {
-      console.error('OpenRouter error:', openRouterResponse.status);
+      const errorBody = await openRouterResponse.text();
+      console.error('OpenRouter error:', {
+        status: openRouterResponse.status,
+        body_length: errorBody.length,
+      });
       return new Response(JSON.stringify({ error: 'AI service unavailable' }), {
         status: 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
