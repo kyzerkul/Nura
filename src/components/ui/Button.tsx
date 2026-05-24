@@ -1,6 +1,6 @@
-import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
+import { ActivityIndicator, Pressable, type PressableProps, useColorScheme } from 'react-native';
 
-import { lightColors } from '@/constants/colors';
+import { getColors } from '@/constants/colors';
 
 import { Text } from './Text';
 
@@ -34,6 +34,8 @@ export function Button({
 }: ButtonProps) {
   const styles = variantClasses[variant];
   const isDisabled = disabled || loading;
+  const scheme = useColorScheme();
+  const colors = getColors(scheme === 'dark' ? 'dark' : 'light');
 
   return (
     <Pressable
@@ -42,7 +44,7 @@ export function Button({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? lightColors.user.text : lightColors.text.primary} />
+        <ActivityIndicator color={variant === 'primary' ? colors.user.text : colors.text.primary} />
       ) : (
         <Text variant="body" className={styles.text}>
           {label}
