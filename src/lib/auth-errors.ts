@@ -10,6 +10,8 @@ const ERROR_MAP: Array<{ pattern: string; message: string }> = [
 ];
 
 export function mapAuthError(raw: string): string {
+  if (__DEV__) return `[DEV] ${raw}`;
+
   const lower = raw.toLowerCase();
   for (const entry of ERROR_MAP) {
     if (lower.includes(entry.pattern.toLowerCase())) {
