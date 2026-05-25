@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { useSession } from '@/hooks/useSession';
 
 export function useOnboardingStatus() {
-  const { session } = useSession();
+  const { session, signOut } = useSession();
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,6 +19,21 @@ export function useOnboardingStatus() {
 
     const checkOnboarding = async () => {
       setIsLoading(true);
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
+        .limit(1)
+        .single();
+
+      if (cancelled) return;
+
+      if (!profile) {
+        await signOut();
+        return;
+      }
+
       const { data, error } = await supabase
         .from('companions')
         .select('id')
@@ -41,7 +56,7 @@ export function useOnboardingStatus() {
     return () => {
       cancelled = true;
     };
-  }, [session?.user?.id]);
+  }, [session?.user?.id, signOut]);
 
   return { needsOnboarding, isLoading };
 }

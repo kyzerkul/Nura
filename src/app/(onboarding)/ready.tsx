@@ -17,7 +17,7 @@ export default function ReadyScreen() {
     lang: string;
     companion: string;
   }>();
-  const { session } = useSession();
+  const { session, signOut } = useSession();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -43,6 +43,10 @@ export default function ReadyScreen() {
         });
 
       if (companionError) {
+        if (companionError.message.includes('foreign key')) {
+          await signOut();
+          return;
+        }
         setError(mapAuthError(companionError.message));
         return;
       }
