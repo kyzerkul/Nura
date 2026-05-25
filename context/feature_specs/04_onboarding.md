@@ -230,7 +230,7 @@ Props: `currentStep: number`, `totalSteps: number`
 
 Use Expo Router's local search params to pass state between screens:
 
-```
+```text
 welcome → language?lang=fr → companion?lang=fr&companion=0 → ready?lang=fr&companion=0
 ```
 
@@ -272,7 +272,7 @@ Both operations require an authenticated session (RLS enforced). No service role
 
 ## Routing summary
 
-```
+```text
 App opens
   │
   ├── No session → (auth)/login

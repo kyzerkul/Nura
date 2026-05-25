@@ -34,6 +34,9 @@ export default function LanguageScreen() {
               <Pressable
                 key={lang.code}
                 onPress={() => setSelected(lang.code)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isSelected }}
+                accessibilityLabel={`${lang.label}. ${lang.sub}`}
                 className={`flex-row items-center gap-4 p-4 rounded-card border ${
                   isSelected
                     ? 'border-accent bg-accent-soft/20'

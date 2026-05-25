@@ -42,6 +42,9 @@ export default function CompanionScreen() {
               <Pressable
                 key={preset.name}
                 onPress={() => setSelected(index)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isSelected }}
+                accessibilityLabel={`${preset.name}. ${preset.description}`}
                 className={`flex-row items-center gap-4 p-4 rounded-card border ${
                   isSelected
                     ? 'border-accent bg-accent-soft/20'

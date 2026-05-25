@@ -30,16 +30,6 @@ export default function ReadyScreen() {
     setError('');
     setLoading(true);
     try {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ language: selectedLang })
-        .eq('id', session.user.id);
-
-      if (profileError) {
-        setError(mapAuthError(profileError.message));
-        return;
-      }
-
       const { error: companionError } = await supabase
         .from('companions')
         .insert({
@@ -54,6 +44,11 @@ export default function ReadyScreen() {
         setError(mapAuthError(companionError.message));
         return;
       }
+
+      await supabase
+        .from('profiles')
+        .update({ language: selectedLang })
+        .eq('id', session.user.id);
 
       router.replace('/(tabs)');
     } finally {

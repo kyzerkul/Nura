@@ -8,24 +8,39 @@ export function useOnboardingStatus() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!session?.user?.id) {
+    const userId = session?.user?.id;
+    if (!userId) {
+      setNeedsOnboarding(false);
       setIsLoading(false);
       return;
     }
 
+    let cancelled = false;
+
     const checkOnboarding = async () => {
-      const { data } = await supabase
+      setIsLoading(true);
+      const { data, error } = await supabase
         .from('companions')
         .select('id')
-        .eq('user_id', session.user.id)
+        .eq('user_id', userId)
         .eq('is_active', true)
         .limit(1);
 
-      setNeedsOnboarding(!data || data.length === 0);
+      if (cancelled) return;
+
+      if (error) {
+        setNeedsOnboarding(false);
+      } else {
+        setNeedsOnboarding(!data || data.length === 0);
+      }
       setIsLoading(false);
     };
 
     checkOnboarding();
+
+    return () => {
+      cancelled = true;
+    };
   }, [session?.user?.id]);
 
   return { needsOnboarding, isLoading };
