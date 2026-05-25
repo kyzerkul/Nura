@@ -61,8 +61,6 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 ### Upcoming
 
 **Phase 2 — Build (spec-driven, one unit at a time)**
-- [x] `02_supabase_setup` — DB schema, RLS policies, Edge Function scaffold
-- [x] `03_authentication` — Sign up, login, OTP, session persistence *(completed — see unit 03 above)*
 - [ ] `04_onboarding` — Companion selection, intro flow
 - [ ] `05_chat` — Chat screen, AI integration, message history
 - [ ] `06_agentic_notifications` — Trigger.dev jobs, proactive push

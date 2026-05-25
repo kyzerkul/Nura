@@ -1,7 +1,7 @@
 # Feature Spec: 03 — Authentication
 
 > **Phase**: 2 (Build)
-> **Status**: pending
+> **Status**: complete
 > **Depends on**: `02_supabase_setup` complete, migration SQL executed in Supabase dashboard
 
 ---

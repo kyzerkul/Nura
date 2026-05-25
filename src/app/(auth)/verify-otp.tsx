@@ -194,10 +194,10 @@ export default function VerifyOtpScreen() {
                 className="mb-4"
               />
 
-              <Pressable onPress={handleResend} disabled={cooldown > 0}>
+              <Pressable onPress={handleResend} disabled={cooldown > 0 || loading}>
                 <Text
                   variant="caption"
-                  className={`text-center ${cooldown > 0 ? 'text-foreground-muted dark:text-dark-foreground-muted' : 'text-accent-blue'}`}
+                  className={`text-center ${cooldown > 0 || loading ? 'text-foreground-muted dark:text-dark-foreground-muted' : 'text-accent-blue'}`}
                 >
                   {cooldown > 0
                     ? `Renvoyer le code (${cooldown}s)` // TODO: i18n
