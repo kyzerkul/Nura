@@ -43,18 +43,23 @@ export default function ReadyScreen() {
         });
 
       if (companionError) {
-        if (companionError.message.includes('foreign key')) {
-          await signOut();
+        if (companionError.code === '23503') {
+          try { await signOut(); } catch {}
           return;
         }
         setError(mapAuthError(companionError.message));
         return;
       }
 
-      await supabase
+      const { error: profileError } = await supabase
         .from('profiles')
         .update({ language: selectedLang })
         .eq('id', session.user.id);
+
+      if (profileError) {
+        setError(mapAuthError(profileError.message));
+        return;
+      }
 
       router.replace('/(tabs)');
     } finally {

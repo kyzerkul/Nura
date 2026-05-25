@@ -20,17 +20,24 @@ export function useOnboardingStatus() {
     const checkOnboarding = async () => {
       setIsLoading(true);
 
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('id')
         .eq('id', userId)
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (cancelled) return;
 
+      if (profileError) {
+        setNeedsOnboarding(false);
+        setIsLoading(false);
+        return;
+      }
+
       if (!profile) {
-        await signOut();
+        try { await signOut(); } catch {}
+        if (!cancelled) setIsLoading(false);
         return;
       }
 
