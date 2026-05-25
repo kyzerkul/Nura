@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { StepIndicator } from '@/components/ui/StepIndicator';
 import { COMPANION_PRESETS } from '@/constants/companions';
 import { mapAuthError } from '@/lib/auth-errors';
+import { t } from '@/constants/onboarding-i18n';
 
 export default function ReadyScreen() {
   const { lang, companion } = useLocalSearchParams<{
@@ -20,9 +21,10 @@ export default function ReadyScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const i = t(lang);
   const companionIndex = Number(companion ?? 0);
   const preset = COMPANION_PRESETS[companionIndex] ?? COMPANION_PRESETS[0];
-  const selectedLang = (lang === 'en' ? 'en' : 'fr') as 'fr' | 'en';
+  const selectedLang = i.lang;
 
   const handleComplete = async () => {
     if (!session?.user?.id) return;
@@ -65,22 +67,21 @@ export default function ReadyScreen() {
           variant="display"
           className="text-center mb-4 text-foreground dark:text-dark-foreground"
         >
-          Prête à commencer ?{/* TODO: i18n */}
+          {i.ready.heading}
         </Text>
 
         <Text
           variant="body"
           className="text-foreground-secondary dark:text-dark-foreground-secondary text-center mb-8 px-4"
         >
-          {preset.name} est là pour toi. Parle-lui de ce que tu veux, quand tu
-          veux.{/* TODO: i18n */}
+          {i.ready.description(preset.name)}
         </Text>
 
         <Text
           variant="caption"
           className="text-foreground-muted dark:text-dark-foreground-muted text-center"
         >
-          Tes conversations sont privées et sécurisées 🔒{/* TODO: i18n */}
+          {i.ready.privacy}
         </Text>
       </View>
 
@@ -94,13 +95,13 @@ export default function ReadyScreen() {
         <StepIndicator currentStep={4} totalSteps={4} />
         <Button
           variant="primary"
-          label="Commencer à parler" // TODO: i18n
+          label={i.ready.cta}
           loading={loading}
           onPress={handleComplete}
         />
         <Pressable onPress={() => router.back()} disabled={loading}>
           <Text variant="caption" className="text-accent-blue text-center">
-            ← Retour{/* TODO: i18n */}
+            {i.ready.back}
           </Text>
         </Pressable>
       </View>

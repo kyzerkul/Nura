@@ -6,6 +6,7 @@ import { router, type Href } from 'expo-router';
 import { Text } from '@/components/ui/Text';
 import { Button } from '@/components/ui/Button';
 import { StepIndicator } from '@/components/ui/StepIndicator';
+import { t } from '@/constants/onboarding-i18n';
 
 type Language = 'fr' | 'en';
 
@@ -16,6 +17,7 @@ const LANGUAGES: { code: Language; flag: string; label: string; sub: string }[] 
 
 export default function LanguageScreen() {
   const [selected, setSelected] = useState<Language>('fr');
+  const i = t(selected);
 
   return (
     <SafeAreaView className="flex-1 bg-background dark:bg-dark-background px-6">
@@ -24,7 +26,7 @@ export default function LanguageScreen() {
           variant="display"
           className="text-center mb-8 text-foreground dark:text-dark-foreground"
         >
-          Tu préfères parler en…{/* TODO: i18n */}
+          {i.language.heading}
         </Text>
 
         <View className="gap-4">
@@ -75,7 +77,7 @@ export default function LanguageScreen() {
         <StepIndicator currentStep={2} totalSteps={4} />
         <Button
           variant="primary"
-          label="Suivant" // TODO: i18n
+          label={i.language.next}
           onPress={() =>
             router.push(`/(onboarding)/companion?lang=${selected}` as Href)
           }
@@ -85,7 +87,7 @@ export default function LanguageScreen() {
             variant="caption"
             className="text-accent-blue text-center"
           >
-            ← Retour{/* TODO: i18n */}
+            {i.language.back}
           </Text>
         </Pressable>
       </View>

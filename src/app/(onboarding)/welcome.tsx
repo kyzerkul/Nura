@@ -5,11 +5,14 @@ import { router, type Href } from 'expo-router';
 import { Text } from '@/components/ui/Text';
 import { Button } from '@/components/ui/Button';
 import { StepIndicator } from '@/components/ui/StepIndicator';
+import { t } from '@/constants/onboarding-i18n';
+
+const i = t('fr');
 
 const FEATURES = [
-  { emoji: '🤝', text: 'Une écoute sincère, sans jugement' }, // TODO: i18n
-  { emoji: '🔒', text: 'Tes conversations restent privées' }, // TODO: i18n
-  { emoji: '💬', text: 'Elle prend de tes nouvelles' }, // TODO: i18n
+  { emoji: '🤝', text: i.welcome.feature1 },
+  { emoji: '🔒', text: i.welcome.feature2 },
+  { emoji: '💬', text: i.welcome.feature3 },
 ];
 
 export default function WelcomeScreen() {
@@ -24,7 +27,7 @@ export default function WelcomeScreen() {
           variant="subheading"
           className="text-foreground-secondary dark:text-dark-foreground-secondary text-center mb-12"
         >
-          Ta confidente numérique{/* TODO: i18n */}
+          {i.welcome.tagline}
         </Text>
 
         <View className="w-full gap-6 mb-12">
@@ -46,7 +49,7 @@ export default function WelcomeScreen() {
         <StepIndicator currentStep={1} totalSteps={4} />
         <Button
           variant="primary"
-          label="Commencer" // TODO: i18n
+          label={i.welcome.cta}
           onPress={() => router.push('/(onboarding)/language' as Href)}
         />
       </View>
