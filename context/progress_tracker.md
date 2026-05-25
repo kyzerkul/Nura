@@ -51,6 +51,9 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 #### Phase 2 — Build (unit 02) ✅
 - [x] `02_supabase_setup` — Supabase client, DB schema, RLS, Edge Function scaffold
 
+#### Phase 2 — Build (unit 03) ✅
+- [x] `03_authentication` — Auth provider, session management, login/signup/OTP/forgot-password screens, tab layout
+
 ### In progress
 
 (none)
@@ -58,8 +61,6 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 ### Upcoming
 
 **Phase 2 — Build (spec-driven, one unit at a time)**
-- [x] `02_supabase_setup` — DB schema, RLS policies, Edge Function scaffold
-- [ ] `03_authentication` — Sign up, login, OTP, session persistence
 - [ ] `04_onboarding` — Companion selection, intro flow
 - [ ] `05_chat` — Chat screen, AI integration, message history
 - [ ] `06_agentic_notifications` — Trigger.dev jobs, proactive push
@@ -100,6 +101,30 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 ---
 
 ## Session notes
+
+### 2026-05-25 — Phase 2 unit 03: Authentication implemented
+- `@expo/vector-icons` installed for tab bar icons
+- `src/providers/AuthProvider.tsx` — React context with `session`, `isLoading`, `signOut`; listens to `onAuthStateChange`
+- `src/hooks/useSession.ts` — convenience hook to consume auth context
+- `src/lib/auth-errors.ts` — maps Supabase error messages to user-friendly French text
+- `src/app/_layout.tsx` — wraps app in `AuthProvider`, splash screen stays visible until auth resolved
+- `src/app/index.tsx` — redirects to `(tabs)` or `(auth)/login` based on session state
+- `src/app/(auth)/_layout.tsx` — Stack layout, redirects to tabs if already authenticated
+- `src/app/(auth)/login.tsx` — email + password login, links to signup/forgot-password/OTP
+- `src/app/(auth)/signup.tsx` — email + password + display name, updates profile after signup
+- `src/app/(auth)/verify-otp.tsx` — two-step phone OTP (send code → verify), 60s resend cooldown
+- `src/app/(auth)/forgot-password.tsx` — sends reset email, shows confirmation state
+- `src/app/(tabs)/_layout.tsx` — 4-tab bottom bar (Accueil/Chat/Journal/Moi) with Feather icons, brand colors
+- `src/app/(tabs)/index.tsx` — home placeholder with sign-out button
+- `src/app/(tabs)/chat.tsx`, `journal.tsx`, `profile.tsx` — placeholder screens
+- `src/types/database.ts` — added `Relationships: []` + `Views/Functions/Enums/CompositeTypes` to fix supabase-js v2.106 generic resolution
+- Deleted stale `.expo/types/router.d.ts` (will regenerate on next `expo start`)
+- All user-facing strings marked with `// TODO: i18n`
+- Form validation: email format, password ≥ 6 chars, display name 2–30 chars, phone +XX format, OTP 6 digits
+- No `console.log`, no hardcoded secrets
+- TypeScript compiles with zero errors (`npx tsc --noEmit`)
+- **Limitation**: No emulator available — visual rendering not verified
+- **Next action**: Write `04_onboarding.md` spec → implement companion selection and intro flow
 
 ### 2026-05-24 — Phase 2 unit 02: Supabase Setup implemented
 - `@supabase/supabase-js`, `react-native-url-polyfill`, `expo-secure-store` installed

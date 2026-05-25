@@ -1,32 +1,38 @@
 import '../global.css';
 
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
 
 import { fontsToLoad } from '@/constants/fonts';
+import { AuthProvider } from '@/providers/AuthProvider';
+import { useSession } from '@/hooks/useSession';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [fontsLoaded, fontError] = useFonts(fontsToLoad);
+function RootNavigator() {
+  const { isLoading } = useSession();
 
   useEffect(() => {
-    if (fontsLoaded || fontError) {
+    if (!isLoading) {
       SplashScreen.hideAsync().catch(() => {});
     }
-  }, [fontsLoaded, fontError]);
+  }, [isLoading]);
 
-  if (!fontsLoaded && !fontError) {
-    return null;
-  }
+  if (isLoading) return null;
+
+  return <Stack screenOptions={{ headerShown: false }} />;
+}
+
+export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts(fontsToLoad);
+
+  if (!fontsLoaded && !fontError) return null;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }} />
-    </ThemeProvider>
+    <AuthProvider>
+      <RootNavigator />
+    </AuthProvider>
   );
 }

@@ -5,33 +5,43 @@ export type Database = {
         Row: Profile;
         Insert: ProfileInsert;
         Update: ProfileUpdate;
+        Relationships: [];
       };
       companions: {
         Row: Companion;
         Insert: CompanionInsert;
         Update: CompanionUpdate;
+        Relationships: [];
       };
       conversations: {
         Row: Conversation;
         Insert: ConversationInsert;
         Update: ConversationUpdate;
+        Relationships: [];
       };
       messages: {
         Row: Message;
         Insert: MessageInsert;
         Update: MessageUpdate;
+        Relationships: [];
       };
       conversation_summaries: {
         Row: ConversationSummary;
         Insert: ConversationSummaryInsert;
         Update: ConversationSummaryUpdate;
+        Relationships: [];
       };
       push_tokens: {
         Row: PushToken;
         Insert: PushTokenInsert;
         Update: PushTokenUpdate;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 };
 
