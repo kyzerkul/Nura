@@ -94,7 +94,7 @@ export default function VerifyOtpScreen() {
   };
 
   const handleResend = async () => {
-    if (cooldown > 0) return;
+    if (cooldown > 0 || loading) return;
     setError('');
     setLoading(true);
     const { error: resendError } = await supabase.auth.signInWithOtp({

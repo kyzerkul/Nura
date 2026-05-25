@@ -52,7 +52,7 @@ Implement the full authentication flow: sign up, login, phone OTP, password rese
 | **Create** | `src/app/(tabs)/_layout.tsx` | Bottom tab layout (4 tabs placeholder) |
 | **Create** | `src/app/(tabs)/index.tsx` | Home tab placeholder (move design preview content here) |
 | **Modify** | `src/app/_layout.tsx` | Wrap in AuthProvider, route based on session state |
-| **Delete** | `src/app/index.tsx` | Replaced by `(tabs)/index.tsx` and auth routing |
+| **Modify** | `src/app/index.tsx` | Session-based redirect entrypoint |
 
 ---
 

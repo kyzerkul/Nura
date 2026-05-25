@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useSession } from '@/hooks/useSession';

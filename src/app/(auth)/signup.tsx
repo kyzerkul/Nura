@@ -52,10 +52,14 @@ export default function SignupScreen() {
     }
 
     if (data.user) {
-      await supabase
+      const { error: profileError } = await supabase
         .from('profiles')
         .update({ display_name: displayName.trim() })
         .eq('id', data.user.id);
+
+      if (profileError) {
+        setError(mapAuthError(profileError.message));
+      }
     }
 
     setLoading(false);

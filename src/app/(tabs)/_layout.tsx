@@ -19,8 +19,8 @@ export default function TabsLayout() {
         tabBarActiveTintColor: colors.accent.primary,
         tabBarInactiveTintColor: colors.text.muted,
         tabBarStyle: {
-          backgroundColor: scheme === 'dark' ? colors.background.card : colors.background.card,
-          borderTopColor: scheme === 'dark' ? colors.border.subtle : colors.border.subtle,
+          backgroundColor: colors.background.card,
+          borderTopColor: colors.border.subtle,
           borderTopWidth: 1,
         },
         tabBarLabelStyle: {
