@@ -97,15 +97,18 @@ export default function VerifyOtpScreen() {
     if (cooldown > 0 || loading) return;
     setError('');
     setLoading(true);
-    const { error: resendError } = await supabase.auth.signInWithOtp({
-      phone: phone.trim(),
-    });
-    setLoading(false);
-    if (resendError) {
-      setError(mapAuthError(resendError.message));
-      return;
+    try {
+      const { error: resendError } = await supabase.auth.signInWithOtp({
+        phone: phone.trim(),
+      });
+      if (resendError) {
+        setError(mapAuthError(resendError.message));
+        return;
+      }
+      startCooldown();
+    } finally {
+      setLoading(false);
     }
-    startCooldown();
   };
 
   return (
