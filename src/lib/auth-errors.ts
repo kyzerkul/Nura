@@ -16,5 +16,6 @@ export function mapAuthError(raw: string): string {
       return entry.message;
     }
   }
+  if (__DEV__) return `[DEV] ${raw}`;
   return 'Une erreur est survenue. Réessaie.'; // TODO: i18n
 }
