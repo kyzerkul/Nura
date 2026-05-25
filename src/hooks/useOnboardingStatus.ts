@@ -36,6 +36,7 @@ export function useOnboardingStatus() {
       }
 
       if (!profile) {
+        setNeedsOnboarding(false);
         try { await signOut(); } catch {}
         if (!cancelled) setIsLoading(false);
         return;
