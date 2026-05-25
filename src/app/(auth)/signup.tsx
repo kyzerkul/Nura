@@ -261,7 +261,13 @@ export default function SignupScreen() {
               </Pressable>
 
               <Pressable
-                onPress={() => { if (!loading) setStep('form'); }}
+                onPress={() => {
+                  if (!loading) {
+                    if (cooldownRef.current) clearInterval(cooldownRef.current);
+                    setCooldown(0);
+                    setStep('form');
+                  }
+                }}
                 disabled={loading}
                 className="mt-6"
               >
