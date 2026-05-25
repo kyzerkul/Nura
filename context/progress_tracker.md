@@ -54,6 +54,9 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 #### Phase 2 — Build (unit 03) ✅
 - [x] `03_authentication` — Auth provider, session management, login/signup/OTP/forgot-password screens, tab layout
 
+#### Phase 2 — Build (unit 04) ✅
+- [x] `04_onboarding` — Onboarding wizard (4 steps), companion selection, language preference
+
 ### In progress
 
 (none)
@@ -61,7 +64,6 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 ### Upcoming
 
 **Phase 2 — Build (spec-driven, one unit at a time)**
-- [ ] `04_onboarding` — Companion selection, intro flow
 - [ ] `05_chat` — Chat screen, AI integration, message history
 - [ ] `06_agentic_notifications` — Trigger.dev jobs, proactive push
 - [ ] `07_profile_settings` — Profile, preferences, account deletion
@@ -101,6 +103,24 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 ---
 
 ## Session notes
+
+### 2026-05-25 — Phase 2 unit 04: Onboarding implemented
+- `src/constants/companions.ts` — 3 companion presets: Nura (warm), Amina (playful), Seren (calm) with full persona text
+- `src/hooks/useOnboardingStatus.ts` — queries `companions` table, returns `needsOnboarding` boolean
+- `src/components/ui/StepIndicator.tsx` — reusable progress dots (filled terracotta for current/past, bordered for future)
+- `src/app/(onboarding)/_layout.tsx` — Stack layout, redirects if already onboarded or unauthenticated
+- `src/app/(onboarding)/welcome.tsx` — Step 1: brand text "nura", tagline, 3 feature bullets, CTA
+- `src/app/(onboarding)/language.tsx` — Step 2: FR/EN selection with selectable cards
+- `src/app/(onboarding)/companion.tsx` — Step 3: pick from 3 persona cards, selection required to proceed
+- `src/app/(onboarding)/ready.tsx` — Step 4: confirmation, saves language to `profiles` + companion to `companions`, then `router.replace('/(tabs)')`
+- `src/app/index.tsx` — updated routing: no session → auth, no companion → onboarding, has companion → tabs
+- State passed between steps via URL query params (`lang`, `companion` index)
+- All user-facing strings marked with `// TODO: i18n`
+- Expo Router typed routes use `as Href` cast (types regenerate on next `expo start`)
+- No `console.log`, no hardcoded secrets
+- TypeScript compiles with zero errors (`npx tsc --noEmit`)
+- **Limitation**: No emulator available — visual rendering not verified
+- **Next action**: Write `05_chat.md` spec → implement chat screen and AI integration
 
 ### 2026-05-25 — Phase 2 unit 03: Authentication implemented
 - `@expo/vector-icons` installed for tab bar icons
