@@ -222,7 +222,7 @@ export default function SignupScreen() {
                 Vérifie ton email{/* TODO: i18n */}
               </Text>
               <Text variant="body" className="text-foreground-muted dark:text-dark-foreground-muted text-center mb-8">
-                Entre le code à 6 chiffres envoyé à {email}{/* TODO: i18n */}
+                Entre le code envoyé à {email}{/* TODO: i18n */}
               </Text>
 
               <Input
@@ -257,6 +257,16 @@ export default function SignupScreen() {
                   {cooldown > 0
                     ? `Renvoyer le code (${cooldown}s)` // TODO: i18n
                     : 'Renvoyer le code' /* TODO: i18n */}
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => { if (!loading) setStep('form'); }}
+                disabled={loading}
+                className="mt-6"
+              >
+                <Text variant="caption" className="text-accent-blue text-center">
+                  ← Modifier mes informations{/* TODO: i18n */}
                 </Text>
               </Pressable>
             </>
