@@ -131,10 +131,14 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 - **Deviation**: fixed pre-existing `react-hooks/set-state-in-effect` ESLint error in `useOnboardingStatus.ts` (fresh install pulled a newer eslint-config-expo that flags it; same minimal pattern applied to the two new hooks)
 - TypeScript compiles with zero errors (`npx tsc --noEmit`); ESLint zero errors (3 pre-existing warnings out of scope)
 - **CodeRabbit PR #8 round 1 addressed**: synchronous in-flight guard against double-send; `UNIQUE(conversations.user_id)` (migration 002) + 23505 conflict recovery for atomic get-or-create; SuggestionChips disabled on load error; Edge Function no longer swallows profile/summary errors (404 vs 500 separated); SSE relay breaks on `[DONE]` + cancels upstream reader; spec status/checklist updated
-- **Action requise**: exécuter la migration `002_single_conversation_per_user.sql` dans Supabase (SQL Editor ou `npx supabase db push`)
-- **Action requise**: déployer l'Edge Function — `npx supabase functions deploy chat` (le scaffold v1 déployé ne streame pas)
-- **Limitation**: no emulator verified on this machine — visual rendering and live streaming not exercised end-to-end
-- **Next action**: Write `06_agentic_notifications.md` spec → Trigger.dev jobs + proactive push
+- ✅ **Fait**: migration `002_single_conversation_per_user.sql` exécutée en production (SQL Editor)
+- ✅ **Fait**: Edge Function `chat` déployée en production (`npx supabase functions deploy chat`)
+- ✅ **Fait**: secret `OPENROUTER_API_KEY` configuré dans le dashboard Supabase
+- **Incident résolu — modèles OpenRouter**: les slugs `:free` vérifiés le 2026-05-24 ont été retirés par OpenRouter; bascule vers les versions payantes des mêmes modèles (`deepseek/deepseek-v4-flash`, `minimax/minimax-m2.5`), ~$0.0002/message, crédits approvisionnés
+- **Fix post-test — clavier Android**: `KeyboardAvoidingView` passé de `height` à `padding` (le mode `height` est cassé en edge-to-edge, défaut depuis Expo SDK 53); champ de saisie désormais visible au-dessus du clavier
+- ✅ **Testé sur appareil réel (Android, Expo Go)**: signup/login, création de conversation, envoi de message, réponse IA en streaming (français, persona respectée), bandeau d'erreur + retry, dark mode, clavier — tout fonctionne
+- **PR #8**: ouverte (`feat/chat`, 6 commits), CodeRabbit round 1 traité, en attente de merge par le founder
+- **Next action**: merge PR #8 → Write `06_agentic_notifications.md` spec → Trigger.dev jobs + proactive push
 
 ### 2026-05-25 — Phase 2 unit 04: Onboarding implemented
 - `src/constants/companions.ts` — 3 companion presets: Nura (warm), Amina (playful), Seren (calm) with full persona text
