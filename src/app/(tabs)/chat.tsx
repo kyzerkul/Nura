@@ -2,7 +2,6 @@ import {
   ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
-  Platform,
   Pressable,
   View,
   useColorScheme,
@@ -98,10 +97,8 @@ export default function ChatScreen() {
     );
   } else {
     content = (
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+      // 'height' is broken on edge-to-edge Android (Expo SDK 53+) — 'padding' works on both platforms
+      <KeyboardAvoidingView className="flex-1" behavior="padding">
         <FlatList
           inverted
           data={chat.messages}
