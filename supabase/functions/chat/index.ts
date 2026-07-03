@@ -154,8 +154,8 @@ serve(async (req: Request) => {
         },
         body: JSON.stringify({
           models: [
-            'deepseek/deepseek-v4-flash:free',
-            'minimax/minimax-m2.5:free',
+            'deepseek/deepseek-v4-flash',
+            'minimax/minimax-m2.5',
           ],
           route: 'fallback',
           stream: true,

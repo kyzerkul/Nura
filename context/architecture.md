@@ -11,8 +11,8 @@
 | Database | **Supabase Postgres** | User profiles, conversations, messages, companions |
 | Storage | **Supabase Storage** | Profile pictures, future media assets |
 | Realtime | **Supabase Realtime** | Live message streaming fallback if needed |
-| AI (primary) | **OpenRouter → DeepSeek V4** | Main model — free tier, server-side only |
-| AI (fallback) | **OpenRouter → Minimax M2.5** | Auto-fallback if DeepSeek is unavailable (to be updated) |
+| AI (primary) | **OpenRouter → DeepSeek V4 Flash** | Main model — paid (near-free pricing), server-side only |
+| AI (fallback) | **OpenRouter → Minimax M2.5** | Auto-fallback if DeepSeek is unavailable (to be reviewed in V2) |
 | AI API layer | **Supabase Edge Functions** | Serverless functions that call OpenRouter (never from client) |
 | Agentic jobs | **Trigger.dev** | Scheduled background jobs: proactive notifications, check-ins |
 | Push notifications | **Expo Push Notification Service (EPNS)** | Delivers notifications to iOS + Android |
@@ -57,8 +57,8 @@ OpenRouter supports native model fallback via the `models` array. This is used i
 POST https://openrouter.ai/api/v1/chat/completions
 {
   "models": [
-    "deepseek/deepseek-v4-flash:free",
-    "minimax/minimax-m2.5:free"
+    "deepseek/deepseek-v4-flash",
+    "minimax/minimax-m2.5"
   ],
   "route": "fallback",
   "messages": [...]
@@ -67,10 +67,10 @@ POST https://openrouter.ai/api/v1/chat/completions
 
 OpenRouter tries the first model; if it fails or times out, it automatically uses the next one. No retry logic needed in our Edge Function.
 
-**Model IDs** (verified 2026-05-24):
-- Primary: `deepseek/deepseek-v4-flash:free`
-- Fallback: `minimax/minimax-m2.5:free`
-- Both free tier — fallback models will be reviewed and potentially updated in V2
+**Model IDs** (verified 2026-07-03):
+- Primary: `deepseek/deepseek-v4-flash` ($0.09/M in, $0.18/M out)
+- Fallback: `minimax/minimax-m2.5` ($0.12/M in, $0.48/M out)
+- History: the `:free` variants chosen 2026-05-24 were delisted by OpenRouter before launch; same models kept in paid form (negligible cost, ~$0.0002 per chat message). Review in V2.
 
 **Invariant**: Every OpenRouter call must use the `models` array with both primary and fallback. Never call with a single `model` string.
 

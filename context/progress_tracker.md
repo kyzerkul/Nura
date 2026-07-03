@@ -81,7 +81,7 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 | CodeRabbit | ✅ Ready | Connected to GitHub — reviews all PRs automatically |
 | GitHub | ✅ Ready | https://github.com/kyzerkul/Nura |
 | PostHog | ✅ Ready | |
-| OpenRouter | ✅ Ready | Slugs verified: `deepseek/deepseek-v4-flash:free` + `minimax/minimax-m2.5:free` |
+| OpenRouter | ✅ Ready | Credits funded. Slugs re-verified 2026-07-03: `deepseek/deepseek-v4-flash` + `minimax/minimax-m2.5` (`:free` variants delisted by OpenRouter) |
 
 ---
 
@@ -89,6 +89,7 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 
 | Date | Decision | Reason |
 |---|---|---|
+| 2026-07-03 | Model slugs switched to paid `deepseek/deepseek-v4-flash` + `minimax/minimax-m2.5` | OpenRouter delisted both `:free` variants; same models kept, cost negligible (~$0.0002/message), credits funded |
 | 2026-07-03 | Single conversation per user, enforced by `UNIQUE(conversations.user_id)` (migration 002) | Product decision: one continuous companion thread; constraint makes client get-or-create atomic (CodeRabbit PR #8) |
 | 2026-05-24 | DeepSeek V4 as primary AI model | Clarification from founder — misheard as Gemini during initial briefing |
 | 2026-05-24 | Minimax M2.5 as fallback model (to be reviewed in V2) | Free alternative if DeepSeek unavailable |
