@@ -116,6 +116,26 @@ export function useConversation(): UseConversationResult {
 
       if (cancelled) return;
 
+      if (createError?.code === '23505') {
+        // Unique violation: another device/session created the conversation
+        // first (conversations.user_id is UNIQUE) — fetch and use theirs.
+        const { data: existingNow, error: refetchError } = await supabase
+          .from('conversations')
+          .select('*')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (cancelled) return;
+
+        if (refetchError || !existingNow) {
+          setHasError(true);
+        } else {
+          setConversation(existingNow);
+        }
+        setIsLoading(false);
+        return;
+      }
+
       if (createError || !created) {
         setHasError(true);
         setIsLoading(false);

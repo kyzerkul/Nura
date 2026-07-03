@@ -116,11 +116,16 @@ serve(async (req: Request) => {
           .limit(CONTEXT_MESSAGE_LIMIT),
       ]);
 
-    if (companionResult.error || !companionResult.data) {
-      return jsonResponse(404, { error: 'Companion not found' });
-    }
-    if (messagesResult.error) {
+    if (
+      companionResult.error ||
+      profileResult.error ||
+      summaryResult.error ||
+      messagesResult.error
+    ) {
       return jsonResponse(500, { error: 'Internal server error' });
+    }
+    if (!companionResult.data) {
+      return jsonResponse(404, { error: 'Companion not found' });
     }
 
     const systemPrompt = buildSystemPrompt({
@@ -180,7 +185,11 @@ serve(async (req: Request) => {
         let fullReply = '';
 
         try {
-          while (true) {
+          // Stop reading as soon as [DONE] arrives — some providers keep the
+          // connection open afterwards, which would leave the relay hanging.
+          let upstreamDone = false;
+
+          while (!upstreamDone) {
             const { done, value } = await reader.read();
             if (done) break;
 
@@ -193,7 +202,10 @@ serve(async (req: Request) => {
               if (!line.startsWith('data: ')) continue;
 
               const payload = line.slice(6);
-              if (payload === '[DONE]') continue;
+              if (payload === '[DONE]') {
+                upstreamDone = true;
+                break;
+              }
 
               try {
                 const parsed = JSON.parse(payload);
@@ -205,6 +217,14 @@ serve(async (req: Request) => {
               } catch {
                 // Ignore malformed upstream chunks (e.g. keep-alive comments)
               }
+            }
+          }
+
+          if (upstreamDone) {
+            try {
+              await reader.cancel();
+            } catch {
+              // Upstream may already be closed — nothing to release.
             }
           }
 

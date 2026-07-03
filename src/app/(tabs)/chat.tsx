@@ -123,7 +123,7 @@ export default function ChatScreen() {
         {chat.messages.length <= 1 && !chat.isStreaming ? (
           <SuggestionChips
             suggestions={t.suggestions}
-            disabled={chat.isStreaming}
+            disabled={chat.isStreaming || chat.error === 'load'}
             onSelect={chat.send}
           />
         ) : null}

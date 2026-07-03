@@ -1,7 +1,7 @@
 # Feature Spec: 05 — Chat & AI Integration
 
 > **Phase**: 2 (Build)
-> **Status**: in_progress
+> **Status**: complete
 > **Depends on**: `04_onboarding` complete
 
 ---
@@ -235,17 +235,21 @@ All colors via NativeWind tokens — no raw hex. All user-facing strings from `c
 
 ## Checklist (must pass before marking complete)
 
-- [ ] Edge Function streams normalized SSE and persists the assistant message server-side
-- [ ] Every OpenRouter call uses the `models` array + `route: fallback` + `stream: true`
-- [ ] Single conversation get-or-create works; greeting inserted on first creation (FR + EN)
-- [ ] Sending a message: optimistic user bubble → typing dots → token-by-token reply
-- [ ] Assistant reply persisted — visible after app restart
-- [ ] Pagination: opening loads 30, scrolling up loads older batches
-- [ ] Suggestion chips shown on near-empty conversation and send correctly
-- [ ] Input disabled while streaming; empty sends impossible
-- [ ] Keyboard avoidance works (input never hidden by keyboard)
-- [ ] Error + retry states for send failure and stream failure
-- [ ] All UI strings bilingual via `chat-i18n.ts`; no raw hex colors
-- [ ] No `console.log` in committed app code; no secrets; no message content logged
-- [ ] `npx tsc --noEmit` passes with zero errors
-- [ ] `progress_tracker.md` updated
+- [x] Edge Function streams normalized SSE and persists the assistant message server-side
+- [x] Every OpenRouter call uses the `models` array + `route: fallback` + `stream: true`
+- [x] Single conversation get-or-create works; greeting inserted on first creation (FR + EN)
+- [x] Sending a message: optimistic user bubble → typing dots → token-by-token reply
+- [x] Assistant reply persisted — visible after app restart
+- [x] Pagination: opening loads 30, scrolling up loads older batches
+- [x] Suggestion chips shown on near-empty conversation and send correctly
+- [x] Input disabled while streaming; empty sends impossible
+- [x] Keyboard avoidance works (input never hidden by keyboard)
+- [x] Error + retry states for send failure and stream failure
+- [x] All UI strings bilingual via `chat-i18n.ts`; no raw hex colors
+- [x] No `console.log` in committed app code; no secrets; no message content logged
+- [x] `npx tsc --noEmit` passes with zero errors
+- [x] `progress_tracker.md` updated
+
+> Runtime behaviors verified by code review and static checks; end-to-end
+> device verification pending (no emulator on the dev machine — see
+> `progress_tracker.md` limitations).

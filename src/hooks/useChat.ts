@@ -37,6 +37,9 @@ export function useChat(conversationId: string | null): UseChatResult {
 
   const abortRef = useRef<AbortController | null>(null);
   const replyRef = useRef('');
+  // Synchronous guard: isStreaming only flips after async work begins,
+  // so a rapid double-tap could otherwise enter send()/retry() twice.
+  const inFlightRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -145,54 +148,66 @@ export function useChat(conversationId: string | null): UseChatResult {
 
   const send = useCallback(
     async (text: string) => {
-      if (!conversationId || isStreaming) return;
+      if (!conversationId || isStreaming || inFlightRef.current) return;
 
       const content = text.trim().slice(0, MAX_MESSAGE_LENGTH);
       if (!content) return;
 
+      inFlightRef.current = true;
       setError(null);
 
-      const optimistic: Message = {
-        id: `temp-${Date.now()}`,
-        conversation_id: conversationId,
-        role: 'user',
-        content,
-        created_at: new Date().toISOString(),
-      };
-      setMessages((current) => [optimistic, ...current]);
-
-      const { data: saved, error: insertError } = await supabase
-        .from('messages')
-        .insert({
+      try {
+        const optimistic: Message = {
+          id: `temp-${Date.now()}`,
           conversation_id: conversationId,
           role: 'user',
           content,
-        })
-        .select()
-        .single();
+          created_at: new Date().toISOString(),
+        };
+        setMessages((current) => [optimistic, ...current]);
 
-      if (insertError || !saved) {
-        setMessages((current) => current.filter((m) => m.id !== optimistic.id));
-        setError('send');
-        return;
+        const { data: saved, error: insertError } = await supabase
+          .from('messages')
+          .insert({
+            conversation_id: conversationId,
+            role: 'user',
+            content,
+          })
+          .select()
+          .single();
+
+        if (insertError || !saved) {
+          setMessages((current) =>
+            current.filter((m) => m.id !== optimistic.id),
+          );
+          setError('send');
+          return;
+        }
+
+        setMessages((current) =>
+          current.map((m) => (m.id === optimistic.id ? saved : m)),
+        );
+
+        await startStream();
+      } finally {
+        inFlightRef.current = false;
       }
-
-      setMessages((current) =>
-        current.map((m) => (m.id === optimistic.id ? saved : m)),
-      );
-
-      await startStream();
     },
     [conversationId, isStreaming, startStream],
   );
 
   const retry = useCallback(async () => {
-    if (isStreaming) return;
-    // The user message is already persisted — only the AI reply is retried.
-    if (messages[0]?.role === 'user') {
-      await startStream();
-    } else {
-      setError(null);
+    if (isStreaming || inFlightRef.current) return;
+    inFlightRef.current = true;
+    try {
+      // The user message is already persisted — only the AI reply is retried.
+      if (messages[0]?.role === 'user') {
+        await startStream();
+      } else {
+        setError(null);
+      }
+    } finally {
+      inFlightRef.current = false;
     }
   }, [isStreaming, messages, startStream]);
 

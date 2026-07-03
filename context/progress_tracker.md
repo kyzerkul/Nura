@@ -89,6 +89,7 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 
 | Date | Decision | Reason |
 |---|---|---|
+| 2026-07-03 | Single conversation per user, enforced by `UNIQUE(conversations.user_id)` (migration 002) | Product decision: one continuous companion thread; constraint makes client get-or-create atomic (CodeRabbit PR #8) |
 | 2026-05-24 | DeepSeek V4 as primary AI model | Clarification from founder — misheard as Gemini during initial briefing |
 | 2026-05-24 | Minimax M2.5 as fallback model (to be reviewed in V2) | Free alternative if DeepSeek unavailable |
 | 2026-05-24 | OpenRouter `models` array for native fallback | Cleaner than try/catch — OpenRouter handles failover automatically |
@@ -128,6 +129,8 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 - `src/app/(tabs)/chat.tsx` — header (avatar + name + subtitle), inverted FlatList, streaming bubble, error banner + retry, keyboard avoidance
 - **Deviation**: fixed pre-existing `react-hooks/set-state-in-effect` ESLint error in `useOnboardingStatus.ts` (fresh install pulled a newer eslint-config-expo that flags it; same minimal pattern applied to the two new hooks)
 - TypeScript compiles with zero errors (`npx tsc --noEmit`); ESLint zero errors (3 pre-existing warnings out of scope)
+- **CodeRabbit PR #8 round 1 addressed**: synchronous in-flight guard against double-send; `UNIQUE(conversations.user_id)` (migration 002) + 23505 conflict recovery for atomic get-or-create; SuggestionChips disabled on load error; Edge Function no longer swallows profile/summary errors (404 vs 500 separated); SSE relay breaks on `[DONE]` + cancels upstream reader; spec status/checklist updated
+- **Action requise**: exécuter la migration `002_single_conversation_per_user.sql` dans Supabase (SQL Editor ou `npx supabase db push`)
 - **Action requise**: déployer l'Edge Function — `npx supabase functions deploy chat` (le scaffold v1 déployé ne streame pas)
 - **Limitation**: no emulator verified on this machine — visual rendering and live streaming not exercised end-to-end
 - **Next action**: Write `06_agentic_notifications.md` spec → Trigger.dev jobs + proactive push
