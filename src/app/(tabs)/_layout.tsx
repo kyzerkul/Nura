@@ -3,12 +3,15 @@ import Feather from '@expo/vector-icons/Feather';
 import { useColorScheme } from 'react-native';
 
 import { useSession } from '@/hooks/useSession';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { getColors } from '@/constants/colors';
 
 export default function TabsLayout() {
   const { session } = useSession();
   const scheme = useColorScheme();
   const colors = getColors(scheme === 'dark' ? 'dark' : 'light');
+
+  usePushNotifications();
 
   if (!session) return <Redirect href="/(auth)/login" />;
 

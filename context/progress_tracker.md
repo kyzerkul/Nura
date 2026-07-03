@@ -62,12 +62,11 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 
 ### In progress
 
-(none)
+- [ ] `06_agentic_notifications` — Trigger.dev jobs, proactive push — **code complete 2026-07-03**, awaiting one-time infra setup (Trigger.dev project, `eas init`, dev build) + device verification
 
 ### Upcoming
 
 **Phase 2 — Build (spec-driven, one unit at a time)**
-- [ ] `06_agentic_notifications` — Trigger.dev jobs, proactive push
 - [ ] `07_profile_settings` — Profile, preferences, account deletion
 
 ---
@@ -115,6 +114,21 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 ---
 
 ## Session notes
+
+### 2026-07-03 — Phase 2 unit 06: Agentic notifications implemented (code complete)
+- PR #8 (unit 05) et la branche `docs/tracker-unit05` mergées dans `main`
+- `context/feature_specs/06_agentic_notifications.md` written and implemented on branch `feat/agentic-notifications`
+- **Architectural decision**: one global hourly Trigger.dev cron scan (eligibility evaluated in-job) instead of one schedule per user — no schedule lifecycle to manage on signup/settings change/deletion
+- **Product rules implemented** (documented in spec, adjustable): quiet hours 21h–09h local (timezone synced from device, UTC fallback), frequency thresholds daily=20h / twice_daily=8h / weekly=144h, ≥3h inactivity gate, reply-gating with one 7-day re-engagement nudge, 50 users/run cap, skip users with no push token
+- `supabase/migrations/003_notifications.sql` — `profiles.timezone` + `profiles.last_proactive_at`; `database.ts` types updated
+- `src/lib/notifications.ts` — fail-soft push registration: permission flow, Android channel, Expo push token upsert (`onConflict user_id,device_id`, device_id = UUID persisted in SecureStore via expo-crypto), timezone sync; skips Expo Go on Android (remote push removed since SDK 53) and missing EAS projectId
+- `src/hooks/usePushNotifications.ts` — registers once per session, `useLastNotificationResponse` → navigate to chat on tap (covers cold start)
+- `src/app/(tabs)/_layout.tsx` — mounts the hook; `app.json` — expo-notifications plugin
+- `trigger.config.ts` + `src/trigger/proactive-checkin.ts` (+ `src/trigger/lib/`: supabase-admin, openrouter, expo-push) — hourly `schedules.task`, per-user isolation (one failure never kills the batch), check-in generated in persona voice + user language via OpenRouter (`models` fallback array invariant), inserted as assistant message **before** push send, `DeviceNotRegistered` tokens pruned
+- Deps added: `expo-notifications@56.0.19`, `expo-crypto@56.0.4`, `@trigger.dev/sdk@4.5.0`; `.env.example` + `TRIGGER_PROJECT_REF`
+- TypeScript zero errors (`npx tsc --noEmit`); ESLint zero errors (same 3 pre-existing warnings out of scope)
+- **Action requise (founder)**: migration 003 dans Supabase; créer le projet Trigger.dev + `TRIGGER_PROJECT_REF` dans `.env`; secrets `SUPABASE_URL`/`SUPABASE_SERVICE_ROLE_KEY`/`OPENROUTER_API_KEY` dans Trigger.dev; `npx trigger.dev@latest dev` puis `deploy`; `eas init` + development build Android pour tester la réception push (Expo Go ne reçoit plus les push distants)
+- **Next action**: PR + CodeRabbit review → founder infra actions → device verification → mark unit 06 completed → write `07_profile_settings.md`
 
 ### 2026-07-03 — Phase 2 unit 05: Chat & streaming AI implemented
 - **New machine**: repo recloned to `c:\Nura\Nura` (was `d:\Nura`), Node.js 24.18.0 LTS installed via winget, `npm install` run fresh

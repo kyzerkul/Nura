@@ -52,6 +52,8 @@ export type Profile = {
   display_name: string | null;
   language: 'fr' | 'en';
   notification_frequency: 'off' | 'daily' | 'twice_daily' | 'weekly';
+  timezone: string | null;
+  last_proactive_at: string | null;
   created_at: string;
   updated_at: string;
 };
