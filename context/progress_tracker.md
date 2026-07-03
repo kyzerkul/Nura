@@ -57,6 +57,9 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 #### Phase 2 — Build (unit 04) ✅
 - [x] `04_onboarding` — Onboarding wizard (4 steps), companion selection, language preference
 
+#### Phase 2 — Build (unit 05) ✅
+- [x] `05_chat` — Chat screen, streaming AI integration, message history, pagination
+
 ### In progress
 
 (none)
@@ -64,7 +67,6 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 ### Upcoming
 
 **Phase 2 — Build (spec-driven, one unit at a time)**
-- [ ] `05_chat` — Chat screen, AI integration, message history
 - [ ] `06_agentic_notifications` — Trigger.dev jobs, proactive push
 - [ ] `07_profile_settings` — Profile, preferences, account deletion
 
@@ -79,7 +81,7 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 | CodeRabbit | ✅ Ready | Connected to GitHub — reviews all PRs automatically |
 | GitHub | ✅ Ready | https://github.com/kyzerkul/Nura |
 | PostHog | ✅ Ready | |
-| OpenRouter | ✅ Ready | Slugs verified: `deepseek/deepseek-v4-flash:free` + `minimax/minimax-m2.5:free` |
+| OpenRouter | ✅ Ready | Credits funded. Slugs re-verified 2026-07-03: `deepseek/deepseek-v4-flash` + `minimax/minimax-m2.5` (`:free` variants delisted by OpenRouter) |
 
 ---
 
@@ -87,6 +89,8 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 
 | Date | Decision | Reason |
 |---|---|---|
+| 2026-07-03 | Model slugs switched to paid `deepseek/deepseek-v4-flash` + `minimax/minimax-m2.5` | OpenRouter delisted both `:free` variants; same models kept, cost negligible (~$0.0002/message), credits funded |
+| 2026-07-03 | Single conversation per user, enforced by `UNIQUE(conversations.user_id)` (migration 002) | Product decision: one continuous companion thread; constraint makes client get-or-create atomic (CodeRabbit PR #8) |
 | 2026-05-24 | DeepSeek V4 as primary AI model | Clarification from founder — misheard as Gemini during initial briefing |
 | 2026-05-24 | Minimax M2.5 as fallback model (to be reviewed in V2) | Free alternative if DeepSeek unavailable |
 | 2026-05-24 | OpenRouter `models` array for native fallback | Cleaner than try/catch — OpenRouter handles failover automatically |
@@ -102,7 +106,35 @@ Goal: Implement the app spec-by-spec, starting with `01_design_system`.
 
 ---
 
+## Future considerations
+
+- 3 ESLint warnings in files outside unit 05 scope (`verify-otp.tsx` unused `View`, `(onboarding)/_layout.tsx` unused `Href`, `auth-errors.ts` `Array<T>` style) — clean up in a future unit
+- Duplicate-conversation race if two devices onboard simultaneously (most recent wins) — revisit if multi-device becomes common
+- PostHog SDK not yet installed — analytics events (`chat_opened`, `message_sent`) deferred to a dedicated unit
+
+---
+
 ## Session notes
+
+### 2026-07-03 — Phase 2 unit 05: Chat & streaming AI implemented
+- **New machine**: repo recloned to `c:\Nura\Nura` (was `d:\Nura`), Node.js 24.18.0 LTS installed via winget, `npm install` run fresh
+- **Product decisions (founder)**: single continuous conversation thread (not multi-conversation); token-by-token streaming
+- `context/feature_specs/05_chat.md` written and implemented
+- `supabase/functions/chat/index.ts` rewritten: client sends only `conversation_id`; server rebuilds context (persona + language + guardrails + summary + last 20 messages), calls OpenRouter with `models` fallback array + `stream: true`, relays normalized SSE (`{"token"}` / `{"done"}` / `{"error"}`), persists the assistant message server-side after stream end
+- `src/constants/companions.ts` — added bilingual `firstMessage` greeting per persona
+- `src/constants/chat-i18n.ts` — bilingual chat strings (same `t(lang)` pattern as onboarding)
+- `src/lib/api.ts` — `streamChatReply()` via `expo/fetch` (RN global fetch can't stream), SSE parsing, AbortSignal support
+- `src/hooks/useConversation.ts` — get-or-create single conversation + greeting insert on first creation
+- `src/hooks/useChat.ts` — paginated history (30/page, newest-first for inverted list), optimistic send, streaming lifecycle, retry (reply only — user message already persisted)
+- `src/components/chat/` — ChatBubble (FadeInDown 200ms), TypingDots (reanimated), ChatInput (44pt send target, 2000-char cap), SuggestionChips
+- `src/app/(tabs)/chat.tsx` — header (avatar + name + subtitle), inverted FlatList, streaming bubble, error banner + retry, keyboard avoidance
+- **Deviation**: fixed pre-existing `react-hooks/set-state-in-effect` ESLint error in `useOnboardingStatus.ts` (fresh install pulled a newer eslint-config-expo that flags it; same minimal pattern applied to the two new hooks)
+- TypeScript compiles with zero errors (`npx tsc --noEmit`); ESLint zero errors (3 pre-existing warnings out of scope)
+- **CodeRabbit PR #8 round 1 addressed**: synchronous in-flight guard against double-send; `UNIQUE(conversations.user_id)` (migration 002) + 23505 conflict recovery for atomic get-or-create; SuggestionChips disabled on load error; Edge Function no longer swallows profile/summary errors (404 vs 500 separated); SSE relay breaks on `[DONE]` + cancels upstream reader; spec status/checklist updated
+- **Action requise**: exécuter la migration `002_single_conversation_per_user.sql` dans Supabase (SQL Editor ou `npx supabase db push`)
+- **Action requise**: déployer l'Edge Function — `npx supabase functions deploy chat` (le scaffold v1 déployé ne streame pas)
+- **Limitation**: no emulator verified on this machine — visual rendering and live streaming not exercised end-to-end
+- **Next action**: Write `06_agentic_notifications.md` spec → Trigger.dev jobs + proactive push
 
 ### 2026-05-25 — Phase 2 unit 04: Onboarding implemented
 - `src/constants/companions.ts` — 3 companion presets: Nura (warm), Amina (playful), Seren (calm) with full persona text

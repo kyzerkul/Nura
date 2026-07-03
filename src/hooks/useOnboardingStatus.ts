@@ -9,15 +9,15 @@ export function useOnboardingStatus() {
 
   useEffect(() => {
     const userId = session?.user?.id;
-    if (!userId) {
-      setNeedsOnboarding(false);
-      setIsLoading(false);
-      return;
-    }
-
     let cancelled = false;
 
     const checkOnboarding = async () => {
+      if (!userId) {
+        setNeedsOnboarding(false);
+        setIsLoading(false);
+        return;
+      }
+
       setIsLoading(true);
 
       const { data: profile, error: profileError } = await supabase
